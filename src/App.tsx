@@ -1,26 +1,22 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { MeshProvider} from '@meshsdk/react';
+import SwapForm from './components/SwapForm';
+import './App.css'; // Optional for styling
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <MeshProvider > {/* No network prop; configured in providers */}
+      <div className="App">
+        <header className="App-header">
+          <h1>Cardano Swap Guard</h1>
+          <p>A deterministic pre-execution simulator for safe DeFi swaps on Cardano.</p>
+        </header>
+        <main>
+          <SwapForm />
+        </main>
+      </div>
+    </MeshProvider>
   );
 }
 
-export default App;
+export default App; // Ensures it's a module

@@ -25,6 +25,35 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    <script>
+      // Minimal global shims so libraries that expect Node-style globals
+      // (`process`, `Buffer`, etc.) do not crash in the browser.
+      (function () {
+        var g = typeof globalThis !== 'undefined' ? globalThis : window;
+
+        // process
+        if (!g.process) {
+          g.process = { browser: true, env: {} };
+        }
+        if (typeof process === 'undefined') {
+          // eslint-disable-next-line no-var
+          var process = g.process;
+        }
+
+        // Buffer
+        if (!g.Buffer && g.require) {
+          try {
+            g.Buffer = g.require('buffer').Buffer;
+          } catch (e) {
+            // ignore, webpack ProvidePlugin/other shims may still inject Buffer
+          }
+        }
+        if (typeof Buffer === 'undefined' && g.Buffer) {
+          // eslint-disable-next-line no-var
+          var Buffer = g.Buffer;
+        }
+      })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
