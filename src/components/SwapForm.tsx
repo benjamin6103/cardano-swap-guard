@@ -123,8 +123,12 @@ const SwapForm: React.FC = () => {
   };
 
   return (
-    <div className="swap-shell">
-      <div className="swap-header">
+    <>
+      <div className="hero fade-in">
+        <div className="hero-text">
+          <h1>Swap Guard Protocol</h1>
+          <p>Deterministic pre-execution simulator for secure DeFi swaps on Cardano.</p>
+        </div>
         {!connected ? (
           <button
             type="button"
@@ -141,8 +145,9 @@ const SwapForm: React.FC = () => {
         )}
       </div>
 
-      <div className="swap-body">
-        <div className="swap-main">
+      <div className="layout">
+        <div className="glass-card fade-in" style={{ animationDelay: '0.1s' }}>
+          <h2>Swap Validation</h2>
           <form
             className="swap-form"
             onSubmit={(e) => {
@@ -150,57 +155,89 @@ const SwapForm: React.FC = () => {
               void handleSafeSwap();
             }}
           >
-            <div className="field">
-              <label htmlFor="amount">ADA input</label>
-              <input
-                id="amount"
-                type="number"
-                value={inputAmount}
-                min={0.1}
-                step={0.1}
-                onChange={(e) => setInputAmount(parseFloat(e.target.value) || 0)}
-              />
-              <small>Amount of ADA you intend to swap.</small>
+            <div className="form-group-card field">
+              <div className="field-header">
+                <label htmlFor="amount">You Pay</label>
+                <span>ADA (Native)</span>
+              </div>
+              <div className="input-wrapper">
+                <input
+                  id="amount"
+                  type="number"
+                  value={inputAmount}
+                  min={0.1}
+                  step={0.1}
+                  disabled={loading}
+                  onChange={(e) => setInputAmount(parseFloat(e.target.value) || 0)}
+                  placeholder="0.0"
+                />
+              </div>
             </div>
 
-            <div className="field">
-              <label htmlFor="recipient">Recipient address</label>
-              <input
-                id="recipient"
-                type="text"
-                value={recipientAddress}
-                onChange={(e) => setRecipientAddress(e.target.value)}
-                placeholder="addr_test1..."
-              />
-              <small>Preprod address that will receive the output.</small>
+            <div className="swap-separator">
+              <div className="swap-separator-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 20L12 4M12 20L18 14M12 20L6 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </div>
+
+            <div className="form-group-card field">
+              <div className="field-header">
+                <label htmlFor="recipient">To Address</label>
+                <span>Recipient</span>
+              </div>
+              <div className="input-wrapper">
+                <input
+                  id="recipient"
+                  type="text"
+                  value={recipientAddress}
+                  disabled={loading}
+                  onChange={(e) => setRecipientAddress(e.target.value)}
+                  placeholder="addr_test1..."
+                  spellCheck="false"
+                />
+              </div>
             </div>
 
             <button
               type="submit"
-              className="btn secondary"
+              className="btn primary"
               disabled={loading || !connected}
             >
-              {loading ? 'Running checks...' : 'Run Safe Swap'}
+              {loading ? (
+                <>
+                  <span className="spinner"></span>
+                  Simulating & Broadcasting...
+                </>
+              ) : (
+                'Run Safe Swap'
+              )}
             </button>
           </form>
 
           <div className="logs-panel">
-            <h3>Guard logs</h3>
             {logs.length === 0 ? (
               <p className="logs-empty">
-                No checks run yet. Configure a swap to see details.
+                Awaiting swap configuration...
               </p>
             ) : (
               <ul className="logs-list">
-                {logs.map((log, i) => (
-                  <li key={i}>{log}</li>
-                ))}
+                {logs.map((log, i) => {
+                  const isError = log.includes('Error') || log.includes('rejected') || log.includes('missing') || log.includes('Aborting');
+                  const isSuccess = log.includes('Executed') || log.includes('passed');
+                  return (
+                    <li key={i} className={isError ? 'error' : isSuccess ? 'success' : ''}>
+                      {log}
+                    </li>
+                  );
+                })}
               </ul>
             )}
 
             {txHash && (
               <p className="tx-link">
-                View transaction on{' '}
+                View on
                 <a
                   href={`https://preprod.cardanoscan.io/transaction/${txHash}`}
                   target="_blank"
@@ -213,27 +250,27 @@ const SwapForm: React.FC = () => {
           </div>
         </div>
 
-        <aside className="metrics-panel">
-          <h3>Market snapshot</h3>
-          <p className="metrics-caption">Live data from Charli3 oracle.</p>
-          <dl className="metrics-list">
-            <div>
+        <aside className="glass-card fade-in" style={{ animationDelay: '0.2s' }}>
+          <h3>Charli3 Oracle Data</h3>
+          <p className="metrics-caption">Live on-chain metrics snapshot.</p>
+          <dl className="metrics-grid">
+            <div className="metric-item">
               <dt>Current price</dt>
               <dd>
                 {metrics.currentPrice !== null
-                  ? metrics.currentPrice.toFixed(4) + ' ADA / USDM'
+                  ? metrics.currentPrice.toFixed(4) + ' ADA/USDM'
                   : '--'}
               </dd>
             </div>
-            <div>
+            <div className="metric-item">
               <dt>24h avg price</dt>
               <dd>
                 {metrics.avgPrice !== null
-                  ? metrics.avgPrice.toFixed(4) + ' ADA / USDM'
+                  ? metrics.avgPrice.toFixed(4) + ' ADA/USDM'
                   : '--'}
               </dd>
             </div>
-            <div>
+            <div className="metric-item">
               <dt>Deviation</dt>
               <dd>
                 {metrics.deviation !== null
@@ -241,7 +278,7 @@ const SwapForm: React.FC = () => {
                   : '--'}
               </dd>
             </div>
-            <div>
+            <div className="metric-item">
               <dt>Estimated slippage</dt>
               <dd>
                 {metrics.slippage !== null
@@ -249,7 +286,7 @@ const SwapForm: React.FC = () => {
                   : '--'}
               </dd>
             </div>
-            <div>
+            <div className="metric-item">
               <dt>Liquidity (TVL)</dt>
               <dd>
                 {metrics.liquidity !== null
@@ -260,7 +297,7 @@ const SwapForm: React.FC = () => {
           </dl>
         </aside>
       </div>
-    </div>
+    </>
   );
 };
 

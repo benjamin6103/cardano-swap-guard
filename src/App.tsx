@@ -1,17 +1,13 @@
 import React from 'react';
-import { MeshProvider} from '@meshsdk/react';
+import { MeshProvider } from '@meshsdk/react';
 import SwapForm from './components/SwapForm';
-import './App.css'; // Optional for styling
+import './App.css';
 
 function App() {
   return (
-    <MeshProvider > {/* No network prop; configured in providers */}
+    <MeshProvider>
       <div className="App">
-        <header className="App-header">
-          <h1>Cardano Swap Guard</h1>
-          <p>A deterministic pre-execution simulator for safe DeFi swaps on Cardano.</p>
-        </header>
-        <main>
+        <main className="app-shell">
           <SwapForm />
         </main>
       </div>
@@ -19,4 +15,4 @@ function App() {
   );
 }
 
-export default App; // Ensures it's a module
+export default App;

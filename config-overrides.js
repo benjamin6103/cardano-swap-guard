@@ -32,6 +32,7 @@ module.exports = function override(config) {
     crypto: require.resolve('crypto-browserify'),
     process: require.resolve('process/browser.js'),
     buffer: require.resolve('buffer/'),
+    vm: false,
   };
 
   // Some ESM dependencies import this deep path without an extension.
@@ -53,7 +54,7 @@ module.exports = function override(config) {
   const ignoreCardanoSourceMapWarnings = (warning) =>
     warning.module &&
     warning.module.resource &&
-    /node_modules[\\/](?:@utxos|@cardano-sdk)[\\/]/.test(warning.module.resource);
+    /node_modules[\\/](?:@utxos|@cardano-sdk|@biglup)[\\/]/.test(warning.module.resource);
 
   config.ignoreWarnings = [...(config.ignoreWarnings || []), ignoreCardanoSourceMapWarnings];
 
